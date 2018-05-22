@@ -1,0 +1,69 @@
+Deploying to Heroku
+===================
+
+This guide is for a first-time Rails developer to deploy their app to Heroku, a popular web-hosting service with strong Rails support. This guide assumes you already have a Heroku account and have installed the [Heroku Toolbelt](https://toolbelt.heroku.com).
+
+Create Your App and Setup Heroku with Git
+-----------------------------------------
+
+1. Make sure you've setup an SSH key for Heroku. Follow this simple guide to create an SSH key and send it to Heroku if needed: [Heroku: Managing Your SSH Keys](https://devcenter.heroku.com/articles/keys)
+2. Navigate into the folder for your Rails app.
+3. Run `$ heroku create <optional app name>`. If you are asked to login with username and password, SSH isn't setup. Follow the wizard and reference step 1 of this guide for help, if needed.
+4. Verify your heroku git remote was created by running `$ git remote`. You should see `heroku` as one of your remotes.
+
+Prepare Your Rails App For Heroku
+---------------------------------
+
+1. Navigate to your Gemfile.
+2. Specify `group: :development` for your SqLite3 gem and add the Postgres gem (`pg`) below SQLite3 with `group: :production`. Your Gemfile should look like this:
+
+    ```
+      source 'https://rubygems.org'
+
+      # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+      gem 'rails', '4.1.6'
+      # Use sqlite3 as the database for Active Record
+      gem 'sqlite3', group: :development # Added development group.
+      gem 'pg', group: :production # Added postgres and made it production only.
+
+      # Use SCSS for stylesheets
+      gem 'sass-rails', '~> 4.0.3'
+
+      ...
+
+    ```
+3. Add the 'rails_12factor' gem to your Gemfile. This is a gem made by Heroku to make tweaks to your app for  deployment on their platform. Your Gemfile should now (and finally) look like this:
+    
+    ```
+      source 'https://rubygems.org'
+
+      # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+      gem 'rails', '4.1.6'
+      # Use sqlite3 as the database for Active Record
+      gem 'sqlite3', group: :development # Added development group.
+      gem 'pg', group: :production # Added postgres and made it production only.
+      gem 'rails_12factor'
+
+      # Use SCSS for stylesheets
+      gem 'sass-rails', '~> 4.0.3'
+
+      ...
+
+    ```
+4. Run `bundle install` and commit those changes to git. (`git add .` then `git commit -m "<your commit message>"`). If you get an error bundling the `pg` gem follow this guide to install Postgres locally using Herkou's Postgres.app: [Heroku Postgres - Set up Postgres on Mac](https://devcenter.heroku.com/articles/heroku-postgresql#local-setup)
+
+Deploy Your App to Heroku
+-------------------------
+
+1. Make sure you've successfully bundled your dependencies with bundler and you've committed all your changes to git.
+2. Run `$ git push heroku master`. This will deploy the master branch of your git repository to Heroku.
+3. If you get a successful message after Heroku finishing deploying, you're good! You can open your app in your browser with `$ heroku open`.
+4. You'll probably notice an error. This is because your database isn't setup yet. To do that, run `$ heroku run rake db:migrate`. This will run `rake db:migrate` remotely on your Heroku server.
+5. Done! Return to the browser and bask in the glory of your code being run on the world-wide web.
+
+Tips and Tricks
+---------------
+
+1. To use Rails Console on your server, run `$ heroku run rails console`. It will be a little slower because you're running a console in a computer across the country, but it's the same as running Rails Console on your local machine.
+2. To add a better, custom vanity domain to your server, follow these instructions: [Heroku: Custom Domains](https://devcenter.heroku.com/articles/custom-domains)
+3. Although we are using SQLite3 locally and Postgres on Heroku, this can result in some issues once your project gets larger and more sophisticated. As a best practice, all developers working on production code (and not hobby projects) insist on running the same DB locally and in production. You can setup your machine to run and use Postgres by following these instructions: [Heroku Postgres](https://devcenter.heroku.com/). Once setup, you can make all new Rails app with PG from the get-go by using this Rails command: `$ rails new myapp --database=postgresql`.

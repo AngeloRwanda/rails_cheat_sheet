@@ -1,0 +1,328 @@
+BRINGING DOWN A MIGRATION:
+rake db:migrate:down VERSION=20100905201547
+
+drop table: drop_table :table_name
+
+DROPDOWN 
+<%= f.select :car_id, @cars.collect { |car| [car.name, car.id] } %>
+
+DROPDOWN ON ASSOCIATED MODELS
+<%= form.collection_select :test_type_id, TestType.order(:id),:id,:name, { selected: 1}, required: true, class: ""%>
+
+HOOKING A PROJECT TO EXISTING HEROKU REMOTE:
+============================================
+git remote add heroku git@heroku.com:project.git
+git remote set-url heroku git@heroku.com:my_app_name.git
+
+Remove a heroku remote: git remote rm heroku
+
+Iterating through many arrays at a time, (zip):
+============================================
+
+diagnoses.zip(diagnoses_code).each do |diagnosis, icd10|
+HmisDiagnosis.create(diagnosis: diagnosis, icd10: icd10, hmis_diagnosis_category_id: 1)
+end
+
+Foreign key, associations: 
+============================================
+
+rails g migration AddUserToUploads user:references,    
+through migration:
+add_reference :clinics, :user, foreign_key: true
+
+Uniqueness on multiple columns on model & migration
+====================================================
+validates :country, uniqueness: { scope: [:medium, :another_medium] }
+add_index :tariffs, [:insurance_provider_id, :product_id], :unique => true
+
+
+showing the difference between two repos: 
+===============================================
+git diff <masterbranch_path> <remotebranch_path>
+
+add a git remote: 
+============================================
+git remote add origin git@github.com:username/project.git
+heroku git:remote -a rapha-clinic
+
+Aliasing a command on linux: 
+=============================================
+echo "alias cls='clear'" >> ~/.bash_aliases && source ~/.bash_aliases
+
+Precompile assets manually: bundle exec rake assets:precompile
+
+Remove/uninstall gem:
+================================================
+gem uninstall <gem-name>
+
+
+
+Time, Dates
+============
+
+
+distance_of_time_in_words:
+--------------------------
+
+from_time = Time.now
+distance_of_time_in_words(from_time, from_time + 50.minutes) # => about 1 hour
+distance_of_time_in_words(from_time, 50.minutes.from_now) # => about 1 hour
+distance_of_time_in_words(from_time, from_time + 15.seconds) # => less than a minute
+distance_of_time_in_words(from_time, from_time + 15.seconds, include_seconds: true) # => less than 20 seconds
+
+time_ago_in_words:
+------------------
+time_ago_in_words(3.minutes.from_now) # => 3 minutes
+time_ago_in_words(3.minutes.ago) # => 3 minutes
+time_ago_in_words(Time.now - 15.hours) # => about 15 hours
+
+Time.current
+#=> Tue, 20 Sep 2016 15:03:30 UTC +00:00
+
+2.minutes.ago
+#=> Tue, 20 Sep 2016 15:01:30 UTC +00:00
+
+2.minutes.since
+#=> Tue, 20 Sep 2016 15:05:30 UTC +00:00 
+
+1.month.ago
+#=> Sat, 20 Aug 2016 15:03:30 UTC +00:00
+
+1.year.since
+#=> Wed, 20 Sep 2017 15:03:30 UTC +00:00 
+
+Rename a git branch: 
+=============================================
+git branch -m Apartment
+
+
+clone heroku repo: 
+==============================================
+heroku git:clone -a myapp
+
+Connect existing repository to Bitbucket
+========================================
+git remote add origin git@bitbucket.org:angeloRwanda/angelo_test.git
+git push -u origin master
+
+
+modify bitbucket git remote url
+===============================================
+git remote set-url origin git@bitbucket.org:angeloRwanda/ivuliro.git
+
+
+Perform heroku database backup and use locally
+===================================================
+heroku pg:backups:capture
+heroku pg:backups:download
+Restore to local db:
+--------------------
+$ pg_restore --verbose --clean --no-acl --no-owner -h localhost -U myuser -d mydb latest.dump
+
+
+
+CAPYBARA methods
+=Navigating=
+visit('/projects')
+visit(post_comments_path(post))
+
+=Clicking links and buttons=
+click_link('id-of-link')
+click_link('Link Text')
+click_button('Save')
+click('Link Text') # Click either a link or a button
+click('Button Value')
+
+=Interacting with forms=
+fill_in('First Name', :with => 'John')
+fill_in('Password', :with => 'Seekrit')
+fill_in('Description', :with => 'Really Long Text…')
+choose('A Radio Button')
+check('A Checkbox')
+uncheck('A Checkbox')
+attach_file('Image', '/path/to/image.jpg')
+select('Option', :from => 'Select Box')
+
+=scoping=
+within("//li[@id='employee']") do
+fill_in 'Name', :with => 'Jimmy'
+end
+within(:css, "li#employee") do
+fill_in 'Name', :with => 'Jimmy'
+end
+within_fieldset('Employee') do
+fill_in 'Name', :with => 'Jimmy'
+end
+within_table('Employee') do
+fill_in 'Name', :with => 'Jimmy'
+end
+
+=Querying=
+page.has_xpath?('//table/tr')
+page.has_css?('table tr.foo')
+page.has_content?('foo')
+page.should have_xpath('//table/tr')
+page.should have_css('table tr.foo')
+page.should have_content('foo')
+page.should have_no_content('foo')
+find_field('First Name').value
+find_link('Hello').visible?
+find_button('Send').click
+find('//table/tr').click
+locate("//*[@id='overlay'").find("//h1").click
+all('a').each { |a| a[:href] }
+
+=Scripting=
+result = page.evaluate_script('4 + 4');
+
+=Debugging=
+save_and_open_page
+
+=Asynchronous JavaScript=
+click_link('foo')
+click_link('bar')
+page.should have_content('baz')
+page.should_not have_xpath('//a')
+page.should have_no_xpath('//a')
+
+=XPath and CSS=
+within(:css, 'ul li') { ... }
+find(:css, 'ul li').text
+locate(:css, 'input#name').value
+Capybara.default_selector = :css
+within('ul li') { ... }
+find('ul li').text
+locate('input#name').value
+
+
+Rails view helpers
+===================
+content_tag(:p, "Hello world!")
+# => <p>Hello world!</p>
+content_tag(:div, content_tag(:p, "Hello world!"), class: "strong")
+# => <div class="strong"><p>Hello world!</p></div>
+content_tag(:div, "Hello world!", class: ["strong", "highlight"])
+# => <div class="strong highlight">Hello world!</div>
+content_tag("select", options, multiple: true)
+# => <select multiple="multiple">...options...</select>
+
+<%= content_tag :div, class: "strong" do -%>
+Hello world!
+<% end -%>
+# => <div class="strong">Hello world!</div>
+
+
+
+Sendgrid usage in production with letter_opener gem
+===================================================
+1. Set up the sendgrid and letter_opener gems in gemfile
+https://github.com/ryanb/letter_opener
+https://github.com/sendgrid/sendgrid-ruby/blob/master/examples/helpers/mail/example.rb#L21
+
+
+Development 
+===========
+2. Set up letter_opener
+3. in controller, write code to send email
+
+Production
+===========
+2. Create the addon in heroku
+4. Generate new api key for the app in sendgrid dashboard 
+	Visit:
+
+	 https://app.sendgrid.com/settings/api_keys 
+	
+	OR
+	
+	 https://sendgrid.com/docs/User_Guide/Settings/api_keys.html
+
+	  When We click the “Create API Key” button, a dropdown menu will appear allowing We to choose the type of API Key We would like to create. After selecting “General API Key” We will be shown a page allowing We to give our new key a name and permissions.
+
+	The API Key name will follow our API key around through the SendGrid customer portal, so it is important that We choose a name that is meaningful to us.
+
+	We’ll then be shown our new API Key, let's copy it and store it in a text file for when We need it in a second.
+
+	In our IDE, we’ll configure heroku to work with SendGrid.  
+
+	In our command line, type in the following:
+	
+	$ heroku config:set SENDGRID_API_KEY=paste_our_api_key_here
+
+	We should now be able to view our username and password by typing in:
+	Command Line
+	$ heroku config
+
+	#config/initializers/devise.rb
+	config.mailer_sender = "mail-to-send-from@email.com"
+
+	In config/environment.rb specify our ActionMailer settings to point to SendGrid’s servers:
+
+	ActionMailer::Base.smtp_settings = {
+	  :user_name => 'our_sendgrid_username',
+	  :password => 'our_sendgrid_password',
+	  :domain => 'ourdomain.com',
+	  :address => 'smtp.sendgrid.net',
+	  :port => 587,
+	  :authentication => :plain,
+	  :enable_starttls_auto => true
+	}
+
+	That’s it! When a new user object is saved, an email will be sent to the user via SendGrid.
+
+3. Setup ActionMailer
+=====================
+	Let’s generate a Mailer class. Mailer classes function as our controllers for email views.
+
+	$ rails generate mailer UserNotifier
+	Now we open up the mailer we’ve just generated, app/mailers/user_notifier.rb and add a mailer action that sends users a signup email.
+
+
+	class UserNotifier < ActionMailer::Base
+	  default :from => 'any_from_address@example.com'
+
+	  # send a signup email to the user, pass in the user object that   contains the user's email address
+	  def send_signup_email(user)
+	    @user = user
+	    mail( :to => @user.email,
+	    :subject => 'Thanks for signing up for our amazing app' )
+	  end
+	end
+	Now we need a view that corresponds to our action and outputs HTML for our email. Create a file app/views/User_notifier/send_signup_email.html.erb as follows:
+
+
+	<!DOCTYPE html>
+	<html>
+	  <head>
+	    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+	  </head>
+	  <body>
+	    <h1>Thanks for signing up, <%= @user.name %>!</h1>
+	    <p>Thanks for joining and have a great day! Now sign in and do
+	awesome things!</p>
+	  </body>
+	</html>
+	If We don’t have a user model quite yet, generate one quickly.
+
+
+	$ rails generate scaffold user name email login
+	$ rake db:migrate
+	Now in the controller for the user model app/controllers/users_controller.rb, add a call to UserNotifier.send_signup_email when a user is saved.
+
+
+
+	class UsersController < ApplicationController
+	  def create
+	    # Create the user from params
+	    @user = User.new(params[:user])
+	    if @user.save
+	      # Deliver the signup email
+	      UserNotifier.send_signup_email(@user).deliver
+	      redirect_to(@user, :notice => 'User created')
+	    else
+	      render :action => 'new'
+	    end
+	  end
+	end
+	Alright, now we’re cooking! Let’s get it all going through SendGrid.
+

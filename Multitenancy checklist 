@@ -1,0 +1,72 @@
+My checklist for multitenancy
+
+1. All models are scoped
+a. Rails db
+b. \dt 
+c. Copy, loop through it, except some, adding the clinic id. 
+d. Add default scope on chosen models
+a. gp && gph && heroku run rake db:migrate
+e. all the scoped models must belong to shema clinic
+
+
+my_tables = %w{clinic_meds departments fees insurance_invoice_entries inventories invoice_items invoice_payments invoices lab_orders med_orders products services sub_test_orders sub_tests test_types user_types visit_tickets tests users patient_profiles}
+
+irb(main):027:0> my_tables.map{|t| t.classify.constantize.update(clinic_id: 1)}
+
+
+c. ensure that the subdomain is unique: on the db level, on the model level
+
+d. ensure that the email is unique
+
+e. For the clinic, please insert an automated user creator which also sends an email to the clinic owner, immersing them in the onboadring process. 
+
+f. For every user created, send them an email content providing their temporary password, urging them to change it immediately.
+
+g. Create demo clinic and its users
+Clinic.create(name: "Demo Clinic", subdomain: "demo")
+h. create demo users 
+user_roles = ["Receptionist", "Doctor", "LabTechnician", "Pharmacist", "Admin"]
+
+i. For online shema clinic, update the users in the db, add a role id. Type column should be removed
+
+emails = ["reception@demo.com", "cons@demo.com", "lab@demo.com", "meds@demo.com", "admin@demo.com"]
+clinic = Clinic.find_by_subdomain("demo")
+user_types.zip(emails).each do |type, email|
+	User.create!(first_name: "Demo User", email: "#{email}", password: "1234567",  password_confirmation: "1234567", type: "#{type}", clinic_id: clinic.id)
+end
+
+user_types.zip(emails).each do |type, email|
+	puts "Department: #{type}" "|| Email: #{email} || Password: 1234567"
+end
+
+
+
+VERY IMPORTANT: The initial user experience
+
+Maybe a user manual, which is searchable per topic, depending on the user type. 
+
+
+3. Build a demo clinic with all different users,
+Add a user scope to mention if they're valid (in the controller)
+
+
+4. Build user onboarding
+a. User manual
+b. Tips and tooltips on hover of info icon
+
+
+5. Build a patient portal
+
+6. Build a backup background process
+
+7. Build a hospitalization process
+
+8. All should be TDD.
+
+
+
+
+
+
+
+
